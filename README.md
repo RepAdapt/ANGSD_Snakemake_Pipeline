@@ -2,6 +2,9 @@
 
 ### Description of repository
 
+See the [Rulegraph](./workflow/rulegraph.pdf) for the dependency graph of rules
+included in this workflow.
+
 This repository contains an example Snakemake pipeline for using ANGSD
 to analyze low coverage data, defined in RepAdapt as < 3X. The pipeline
 performs the following actions:
