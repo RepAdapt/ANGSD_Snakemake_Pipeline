@@ -1,6 +1,7 @@
 import os
 import glob
 import itertools
+import re
 import pandas as pd
 from snakemake.utils import min_version
 
