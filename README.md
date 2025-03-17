@@ -99,6 +99,6 @@ For execution on a SLURM cluster, the pipeline can be executed by running:
 
 `snakemake --configfile ../config/server.yaml --profile profile/ --workflow-profile slurm/ --sdm conda apptainer`
 
-Note that the YAML configfile at [slurm](./workflow/slurm/confilg.yaml) will
+Note that the YAML configfile at [slurm](./workflow/slurm/config.yaml) will
 likely need to be modified to accommodate the paths on your cluster.
 
