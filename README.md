@@ -3,7 +3,9 @@
 ### Description of repository
 
 See the [Rulegraph](./workflow/rulegraph.pdf) for the dependency graph of rules
-included in this workflow.
+included in this workflow. This is helpful for knowing the order in which rules are
+run in case you want to transform the pipeline into shell scripts rather than
+using Snakemake.
 
 This repository contains an example Snakemake pipeline for using ANGSD
 to analyze low coverage data, defined in RepAdapt as < 3X. The pipeline
