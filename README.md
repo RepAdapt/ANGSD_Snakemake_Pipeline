@@ -86,7 +86,7 @@ After activating the environment (`conda activate <env_name>`), the pipeline can
 be executed from the [workflow](./workflow) directory by running a command that
 looks something like:
 
-`snakemake --configfile ../config/serverl.yaml --profile profile/ -j <cores>`
+`snakemake --configfile ../config/serverl.yaml --profile profile/ --sdm conda apptaienr -j <cores>`
 
 Here, `<cores>` is the number of cores available for executing parallel processes. 
 
@@ -95,7 +95,7 @@ likely need to be modified to accommodate the paths to files on you server.
 
 For execution on a SLURM cluster, the pipeline can be executed by running:
 
-`snakemake --configfile ../config/server.yaml --profile profile/ --workflow-profile slurm/`
+`snakemake --configfile ../config/server.yaml --profile profile/ --workflow-profile slurm/ --sdm conda apptainer`
 
 Note that the YAML configfile at [slurm](./workflow/slurm/confilg.yaml) will
 likely need to be modified to accommodate the paths on your cluster.
