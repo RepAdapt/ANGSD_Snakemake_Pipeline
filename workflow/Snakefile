@@ -1,0 +1,62 @@
+import os
+import glob
+import itertools
+import pandas as pd
+from snakemake.utils import min_version
+
+min_version("8.30.0")
+
+######################
+#### INPUT FILES ####
+#####################
+
+# Samples and chromosomes as list
+POPULATIONS = pd.read_table(config['samples'])['population'].unique().tolist()
+POPULATIONS = list(map(str, POPULATIONS))
+CHROMOSOMES = pd.read_table(config['chromosomes'], header=None).iloc[:,0].tolist()
+
+# Reference genome
+REFERENCE_GENOME = config['ref']
+
+######################
+#### OUTPUT PATHS ####
+######################
+
+# Paths for output files
+LOG_DIR = config['log_prefix']
+REF_DIR = f"{config['results_prefix']}/ref"
+PROGRAM_RESOURCE_DIR = f"{config['results_prefix']}/program_resources"
+ANGSD_DIR = f"{config['results_prefix']}/angsd"
+
+###################
+#### WILDCARDS ####
+###################
+
+# Set up population combinations
+POP_COMBS = list(itertools.combinations(POPULATIONS, 2))
+POP_COMBS = [f"{x[0]}_{x[1]}" for x in POP_COMBS]
+
+wildcard_constraints:
+    chrom='|'.join([x for x in CHROMOSOMES]),
+    population='|'.join([x for x in POPULATIONS])
+
+###############
+#### RULES ####
+###############
+
+localrules: 
+    copy_ref,
+    samtools_index_ref,
+    angsd_sweeps_fst_thetas_done,
+    angsd_gea_allele_frequencies_done
+
+include: 'rules/common.smk'
+
+rule all:
+   input:
+        f'{ANGSD_DIR}/angsd_sweeps_fst_thetas.done',
+        f'{ANGSD_DIR}/angsd_gea_allele_frequencies.done',
+
+include: 'rules/ref.smk'
+include: 'rules/angsd_sweeps_fst_thetas.smk'
+include: 'rules/angsd_gea_allele_frequencies.smk'

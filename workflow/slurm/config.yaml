@@ -1,0 +1,13 @@
+__use_yte__: true
+executor: slurm
+default-resources:
+  - mem_mb=4000
+  - runtime=60
+  - slurm_account=def-nessrobe_cpu
+latency-wait: 60
+jobs: 300
+retries: 1
+local-cores: 1
+scheduler: greedy
+max-jobs-per-second: 1
+max-status-checks-per-second: 1

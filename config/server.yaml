@@ -1,0 +1,9 @@
+# Input files
+samples: ../resources/sample_sheet.txt
+chromosomes: ../resources/chromosome_file.txt
+bam_lists: ../resources/bam_lists 
+ref: /research/references/trifolium/repens/UTM_Trep_v1.0/UTM_Trep_v1.0_haploid_reference_softMasked.fasta
+
+# Output
+results_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/results
+log_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/logs

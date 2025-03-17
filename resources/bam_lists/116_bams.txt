@@ -1,0 +1,3 @@
+/scratch/projects/trifolium/repadapt_angsd_snakemake/test_bams/s_116_3_merged_sorted_dupsMarked_downsampled.bam
+/scratch/projects/trifolium/repadapt_angsd_snakemake/test_bams/s_116_7_merged_sorted_dupsMarked_downsampled.bam
+/scratch/projects/trifolium/repadapt_angsd_snakemake/test_bams/s_116_1_merged_sorted_dupsMarked_downsampled.bam

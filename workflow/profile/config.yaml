@@ -1,0 +1,9 @@
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+notemp: True
+conda-cleanup-pkgs: cache
+software-deployment-method: "conda"
+software-deployment-method: "apptainer"
+apptainer-args: "--bind /scratch --bind /home --bind research"
+
