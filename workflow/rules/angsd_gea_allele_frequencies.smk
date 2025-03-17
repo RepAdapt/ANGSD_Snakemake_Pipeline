@@ -33,7 +33,7 @@ rule angsd_snps_allSamples:
             -baq 2 \
             -ref {input.ref} \
             -doCounts 1 \
-            -dumpCounts 4 \
+            -dumpCounts 3 \
             -minQ 30 \
             -minMapQ 30 \
             -remove_bads 1 \
@@ -82,13 +82,13 @@ rule angsd_alleleCounts_freq_byPopulation:
         ref = rules.copy_ref.output,
         ref_idx = rules.samtools_index_ref.output
     output:
-        mafs = f'{ANGSD_DIR}/snps/{{chrom}}/{{chrom}}_{{population}}_snps.mafs.gz',
-        pos = f'{ANGSD_DIR}/snps/{{chrom}}/{{chrom}}_{{population}}_snps.pos.gz',
-        counts = f'{ANGSD_DIR}/snps/{{chrom}}/{{chrom}}_{{population}}_snps.counts.gz',
+        mafs = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.mafs.gz',
+        pos = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.pos.gz',
+        counts = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.counts.gz',
     log: f'{LOG_DIR}/angsd_alleleCounts_freqs_byPopulation/{{chrom}}_{{population}}_snps.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        out = f'{ANGSD_DIR}/snps/{{chrom}}/{{chrom}}_{{population}}_snps'
+        out = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps'
     threads: 2
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 4000,
