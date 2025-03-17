@@ -51,7 +51,7 @@ rule angsd_estimate_joint_population_sfs:
     threads: 12
     resources:
         mem_mb = 3000,
-        runtime = lambda attempt: attempt * 360 
+        runtime = lambda wildcards, attempt: attempt * 360 
     shell:
         """
         realSFS {input.safs} \
