@@ -7,6 +7,12 @@ included in this workflow. This is helpful for knowing the order in which rules 
 run in case you want to transform the pipeline into shell scripts rather than
 using Snakemake.
 
+Note the separate
+[with_rename](https://github.com/RepAdapt/ANGSD_Snakemake_Pipeline/tree/with_rename)
+branch in this repository that will automatically handle renaming output files
+using the RepAdapt Prefix you have chosen. It simply requires you specify the prefix in
+the [config](./config/server.yaml) file.
+
 This repository contains an example Snakemake pipeline for using ANGSD
 to analyze low coverage data, defined in RepAdapt as < 3X. The pipeline
 performs the following actions:
