@@ -7,16 +7,16 @@ rule angsd_snps_allSamples:
         ref = rules.copy_ref.output,
         ref_idx = rules.samtools_index_ref.output
     output:
-        gls = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.beagle.gz',
-        mafs = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.mafs.gz',
-        snp_stats = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.snpStat.gz',
-        hwe = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.hwe.gz',
-        pos = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.pos.gz',
-        counts = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps.counts.gz'
+        gls = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.beagle.gz',
+        mafs = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.mafs.gz',
+        snp_stats = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.snpStat.gz',
+        hwe = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.hwe.gz',
+        pos = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.pos.gz',
+        counts = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps.counts.gz'
     log: f"{LOG_DIR}/angsd_snps_allSamples/{{chrom}}_angsd_snps.log"
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        out = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{{chrom}}_allSamples_snps'
+        out = f'{ANGSD_DIR}/snps/allSamples/{{chrom}}/{PREFIX}_{{chrom}}_allSamples_snps'
     threads: 4
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 24000,
@@ -53,7 +53,7 @@ rule create_sites_file:
     input:
         rules.angsd_snps_allSamples.output.pos
     output:
-        f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{{chrom}}.sites"
+        f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{PREFIX}_{{chrom}}.sites"
     shell:
         """
         zcat {input} | tail -n +2 | cut -f1,2 > {output}
@@ -66,8 +66,8 @@ rule index_snps:
     input:
         sites = rules.create_sites_file.output 
     output:
-        idx = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{{chrom}}.sites.idx",
-        bin = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{{chrom}}.sites.bin"
+        idx = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{PREFIX}_{{chrom}}.sites.idx",
+        bin = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/{PREFIX}_{{chrom}}.sites.bin"
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     shell:
         """
@@ -82,13 +82,13 @@ rule angsd_alleleCounts_freq_byPopulation:
         ref = rules.copy_ref.output,
         ref_idx = rules.samtools_index_ref.output
     output:
-        mafs = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.mafs.gz',
-        pos = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.pos.gz',
-        counts = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps.counts.gz',
+        mafs = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_snps.mafs.gz',
+        pos = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_snps.pos.gz',
+        counts = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_snps.counts.gz',
     log: f'{LOG_DIR}/angsd_alleleCounts_freqs_byPopulation/{{chrom}}_{{population}}_snps.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        out = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{{chrom}}_{{population}}_snps'
+        out = f'{ANGSD_DIR}/snps/byPopulation/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_snps'
     threads: 2
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 4000,

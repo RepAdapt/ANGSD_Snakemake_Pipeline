@@ -3,6 +3,8 @@ samples: ../resources/sample_sheet.txt
 chromosomes: ../resources/chromosome_file.txt
 bam_lists: ../resources/bam_lists 
 ref: /research/references/trifolium/repens/UTM_Trep_v1.0/UTM_Trep_v1.0_haploid_reference_softMasked.fasta
+ref_name: Trifolium_repens.fasta  # What should ref genome be renamed to
+repadapt_prefix: rawg0003_trifolium_repens_santangelo  # Prefix added to beginning of all outputs
 
 # Output
 results_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/results

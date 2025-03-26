@@ -11,13 +11,13 @@ rule angsd_saf_likelihood_byPopulation:
         ref = rules.copy_ref.output,
         ref_idx = rules.samtools_index_ref.output
     output:
-        saf = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{{chrom}}_{{population}}.saf.gz',
-        saf_idx = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{{chrom}}_{{population}}.saf.idx',
-        saf_pos = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{{chrom}}_{{population}}.saf.pos.gz'
+        saf = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.saf.gz',
+        saf_idx = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.saf.idx',
+        saf_pos = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.saf.pos.gz'
     log: f'{LOG_DIR}/angsd_saf_likelihood_byPopulation/{{population}}_{{chrom}}_saf.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        out = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{{chrom}}_{{population}}'
+        out = f'{ANGSD_DIR}/saf/{{population}}/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}'
     threads: 6
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 10000,
@@ -45,7 +45,7 @@ rule angsd_estimate_joint_population_sfs:
     input:
         safs = get_population_saf_files
     output:
-        f'{ANGSD_DIR}/sfs/2dsfs/{{chrom}}/{{chrom}}_{{pop_comb}}.2dsfs'
+        f'{ANGSD_DIR}/sfs/2dsfs/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.2dsfs'
     log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs/{{chrom}}_{{pop_comb}}_2dsfs.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 12
@@ -69,7 +69,7 @@ rule angsd_estimate_sfs_byPopulation:
     input:
         saf = rules.angsd_saf_likelihood_byPopulation.output.saf_idx
     output:
-        f'{ANGSD_DIR}/sfs/1dsfs/{{chrom}}/{{chrom}}_{{population}}.sfs'
+        f'{ANGSD_DIR}/sfs/1dsfs/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.sfs'
     log: f'{LOG_DIR}/angsd_estimate_sfs_byPopulation/{{chrom}}_{{population}}_1dsfs.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 6
@@ -98,8 +98,8 @@ rule angsd_population_fst_index:
         saf_idx = get_population_saf_files,
         joint_sfs = rules.angsd_estimate_joint_population_sfs.output
     output:
-        fst = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{{chrom}}_{{pop_comb}}.fst.gz',
-        idx = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{{chrom}}_{{pop_comb}}.fst.idx'
+        fst = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.fst.gz',
+        idx = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.fst.idx'
     log: f'{LOG_DIR}/angsd_habitat_fst_index/{{chrom}}_{{pop_comb}}_index.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 4
@@ -107,7 +107,7 @@ rule angsd_population_fst_index:
         mem_mb = 4000,
         runtime = 120
     params:
-        fstout = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{{chrom}}_{{pop_comb}}'
+        fstout = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}'
     shell:
         """
         realSFS fst index {input.saf_idx} \
@@ -124,7 +124,7 @@ rule angsd_fst_readable:
     input:
         rules.angsd_population_fst_index.output.idx
     output:
-        f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{{chrom}}_{{pop_comb}}_readable.fst'
+        f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}_readable.fst'
     log: f'{LOG_DIR}/angsd_fst_allSites_readable/{{chrom}}_{{pop_comb}}_readable_fst.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     shell:
@@ -140,13 +140,13 @@ rule angsd_estimate_thetas_byPopulation:
         saf_idx = rules.angsd_saf_likelihood_byPopulation.output.saf_idx,
         sfs = rules.angsd_estimate_sfs_byPopulation.output
     output:
-        idx = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}.thetas.idx',
-        thet = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}.thetas.gz'
+        idx = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.thetas.idx',
+        thet = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.thetas.gz'
     log: f'{LOG_DIR}/angsd_estimate_thetas_byPopulation/{{chrom}}_{{population}}_thetas.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 4
     params:
-        out = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}'
+        out = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}'
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 4000,
         runtime = 60
@@ -166,7 +166,7 @@ rule angsd_thetas_readable:
     input:
         rules.angsd_estimate_thetas_byPopulation.output.idx
     output:
-        f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}_readable.thetas'
+        f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_readable.thetas'
     log: f'{LOG_DIR}/angsd_thetas_allSites_readable/{{chrom}}_{{population}}_readable_thetas.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     shell:
@@ -182,11 +182,11 @@ rule windowed_theta:
     input:
         rules.angsd_estimate_thetas_byPopulation.output.idx
     output:
-        f"{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}_windowedThetas.gz.pestPG"
+        f"{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_windowedThetas.gz.pestPG"
     log: f'{LOG_DIR}/windowed_theta/{{chrom}}_{{population}}_windowTheta.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        out = f"{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{{chrom}}_{{population}}_windowedThetas.gz",
+        out = f"{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}_windowedThetas.gz",
         win = 20000,
         step = 20000
     resources:
@@ -201,7 +201,7 @@ rule windowed_fst:
     input:
         rules.angsd_population_fst_index.output.idx
     output:
-        f"{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{{chrom}}_{{pop_comb}}_windowed.fst"
+        f"{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}_windowed.fst"
     log: f'{LOG_DIR}/windowed_fst/{{chrom}}_{{pop_comb}}_windowedFst.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
