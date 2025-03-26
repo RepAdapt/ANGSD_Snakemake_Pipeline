@@ -10,8 +10,7 @@ using Snakemake.
 Note the separate
 [with_rename](https://github.com/RepAdapt/ANGSD_Snakemake_Pipeline/tree/with_rename)
 branch in this repository that will automatically handle renaming output files
-using the RepAdapt Prefix you have chosen. It simply requires you specify the prefix in
-the [config](./config/server.yaml) file.
+using the RepAdapt Prefix you have chosen. 
 
 This repository contains an example Snakemake pipeline for using ANGSD
 to analyze low coverage data, defined in RepAdapt as < 3X. The pipeline
