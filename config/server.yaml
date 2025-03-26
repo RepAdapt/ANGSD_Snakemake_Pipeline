@@ -2,7 +2,7 @@
 samples: ../resources/sample_sheet.txt
 chromosomes: ../resources/chromosome_file.txt
 bam_lists: ../resources/bam_lists 
-ref: /research/references/trifolium/repens/UTM_Trep_v1.0/UTM_Trep_v1.0_haploid_reference_softMasked.fasta
+ref: /scratch/projects/trifolium/test_ref/GCA_030408175.1_UTM_Trep_v1.0_genomic.fna
 ref_name: Trifolium_repens.fasta  # What should ref genome be renamed to
 repadapt_prefix: rawg0003_trifolium_repens_santangelo  # Prefix added to beginning of all outputs
 
