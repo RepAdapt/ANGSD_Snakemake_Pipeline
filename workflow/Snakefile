@@ -18,7 +18,6 @@ CHROMOSOMES = pd.read_table(config['chromosomes'], header=None).iloc[:,0].tolist
 
 # Reference genome
 REFERENCE_GENOME = config['ref']
-REF_GENOME_NAME = config['ref_name'] 
 
 # Prefix
 PREFIX = config['repadapt_prefix']
