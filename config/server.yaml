@@ -2,7 +2,7 @@
 samples: ../resources/sample_sheet.txt
 chromosomes: ../resources/chromosome_file.txt
 bam_lists: ../resources/bam_lists 
-ref: /scratch/projects/trifolium/test_ref/GCA_030408175.1_UTM_Trep_v1.0_genomic.fna
+ref: /scratch/projects/trifolium/test_ref/GCA_030408175.1_UTM_Trep_v1.0_genomic.fna.gz
 repadapt_prefix: rawg0003_trifolium_repens_santangelo  # Prefix added to beginning of all outputs
 
 # Output
