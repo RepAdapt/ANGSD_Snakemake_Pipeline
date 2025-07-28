@@ -114,7 +114,7 @@ rule angsd_alleleCounts_freq_byPopulation:
 
 rule angsd_gea_allele_frequencies_done:
     input:
-        expand(rules.angsd_alleleCounts_freq_byPopulation.output, population=POPULATIONS, chrom=CHROMOSOMES[0])
+        expand(rules.angsd_alleleCounts_freq_byPopulation.output, population=POPULATIONS, chrom=CHROMOSOMES)
     output:
         f"{ANGSD_DIR}/angsd_gea_allele_frequencies.done"
     shell:

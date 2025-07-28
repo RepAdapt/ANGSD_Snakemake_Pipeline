@@ -224,10 +224,10 @@ rule angsd_sweeps_fst_thetas_done:
     Generate empty flag file signalling successful completion of SFS and summary stat for habitats
     """
     input:
-        expand(rules.windowed_fst.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES[0]), 
-        expand(rules.windowed_theta.output, population=POPULATIONS, chrom=CHROMOSOMES[0]),
-        expand(rules.angsd_fst_readable.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES[0]), 
-        expand(rules.angsd_thetas_readable.output, population=POPULATIONS, chrom=CHROMOSOMES[0]) 
+        expand(rules.windowed_fst.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES), 
+        expand(rules.windowed_theta.output, population=POPULATIONS, chrom=CHROMOSOMES),
+        expand(rules.angsd_fst_readable.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES), 
+        expand(rules.angsd_thetas_readable.output, population=POPULATIONS, chrom=CHROMOSOMES) 
     output:
         f'{ANGSD_DIR}/angsd_sweeps_fst_thetas.done'
     shell:
