@@ -38,15 +38,101 @@ rule angsd_saf_likelihood_byPopulation:
             -bam {input.bams} 2> {log}
         """
  
-rule angsd_estimate_joint_population_sfs:
+rule select_random100Mb_sites:
+    input:
+        rules.samtools_index_ref.output
+    output:
+        f'{PROGRAM_RESOURCE_DIR}/angsd_sites/random100Mb.sites'
+    params:
+        chroms = CHROMOSOMES,
+        total_sites = 100000000
+    run:
+        import random
+        lines = open(input[0], "r").readlines()
+        chr_prop_length_dict = {}
+        total_length = 0
+        for l in lines:
+            sl = l.split("\t")
+            chr = sl[0]
+            length = int(sl[1])
+            if chr in params.chroms:
+                total_length += int(length)
+        for l in lines:
+            sl = l.split("\t")
+            chr = sl[0]
+            length = int(sl[1])
+            if chr in params.chroms:
+                chr_prop_length_dict[chr] = round(int(params.total_sites) * (length / total_length))
+        sites_dict = {}
+        random.seed(42)
+        for l in lines:
+            sl = l.split("\t")
+            chr = sl[0]
+            length = int(sl[1])
+            if chr in params.chroms:
+                sites_dict[chr] = sorted(random.sample(range(1, length), chr_prop_length_dict[chr]))
+        with open(output[0], "w") as fout:
+            for k, v in sites_dict.items():
+                for site in v:
+                    fout.write(f"{k}\t{site}\n")
+
+
+rule angsd_index_random100Mb_sites:
+    input:
+        rules.select_random100Mb_sites.output
+    output:
+        idx = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/random100Mb.sites.idx",
+        bin = f"{PROGRAM_RESOURCE_DIR}/angsd_sites/random100Mb.sites.bin"
+    container: 'library://james-s-santangelo/angsd/angsd:0.938'
+    shell:
+        """
+        angsd sites index {input}
+        """
+
+rule angsd_saf_random100Mb_byPopulation:
+    input:
+        bams = lambda w: f"{config['bam_lists']}/{w.population}_bams.txt",
+        ref = rules.copy_ref.output,
+        ref_idx = rules.samtools_index_ref.output,
+        sites = rules.select_random100Mb_sites.output,
+        sites_idx = rules.angsd_index_random100Mb_sites.output,
+    output:
+        saf = f'{ANGSD_DIR}/saf/{{population}}/{{population}}_random100Mb.saf.gz',
+        saf_idx = f'{ANGSD_DIR}/saf/{{population}}/{{population}}_random100Mb.saf.idx',
+        saf_pos = f'{ANGSD_DIR}/saf/{{population}}/{{population}}_random100Mb.saf.pos.gz'
+    log: f'{LOG_DIR}/angsd_saf_likelihood_byPopulation/{{population}}_random100Mb_saf.log'
+    container: 'library://james-s-santangelo/angsd/angsd:0.938'
+    params:
+        out = f'{ANGSD_DIR}/saf/{{population}}/{{population}}_random100Mb'
+    threads: 6
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 10000,
+        runtime = lambda wildcards, attempt: attempt * 180
+    shell:
+        """
+        angsd -GL 1 \
+            -out {params.out} \
+            -nThreads {threads} \
+            -doMajorMinor 4 \
+            -baq 2 \
+            -ref {input.ref} \
+            -minQ 30 \
+            -minMapQ 30 \
+            -doSaf 1 \
+            -anc {input.ref} \
+            -sites {input.sites} \
+            -bam {input.bams} 2> {log}
+        """
+
+rule angsd_estimate_joint_population_sfs_random100Mb:
     """
     Estimated folded, two-dimensional SFS for each population pair using realSFS
     """
     input:
-        safs = get_population_saf_files
+        safs = get_population_saf_files_random100Mb
     output:
-        f'{ANGSD_DIR}/sfs/2dsfs/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.2dsfs'
-    log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs/{{chrom}}_{{pop_comb}}_2dsfs.log'
+        f'{ANGSD_DIR}/sfs/2dsfs/{{chrom}}/{PREFIX}_{{pop_comb}}_random100Mb.2dsfs'
+    log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs/{{pop_comb}}_2dsfs.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 12
     resources:
@@ -62,15 +148,15 @@ rule angsd_estimate_joint_population_sfs:
             -P {threads} > {output} 2> {log}
         """
 
-rule angsd_estimate_sfs_byPopulation:
+rule angsd_estimate_sfs_byPopulation_random100Mb:
     """
     Estimate folded SFS separately for each population (i.e., 1D SFS) using realSFS. 
     """
     input:
-        saf = rules.angsd_saf_likelihood_byPopulation.output.saf_idx
+        saf = rules.angsd_saf_random100Mb_byPopulation.output.saf_idx
     output:
-        f'{ANGSD_DIR}/sfs/1dsfs/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.sfs'
-    log: f'{LOG_DIR}/angsd_estimate_sfs_byPopulation/{{chrom}}_{{population}}_1dsfs.log'
+        f'{ANGSD_DIR}/sfs/1dsfs/{{population}}_random100Mb.sfs'
+    log: f'{LOG_DIR}/angsd_estimate_sfs_byPopulation_random100Mb/{{population}}_1dsfs.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 6
     resources:
@@ -96,7 +182,7 @@ rule angsd_population_fst_index:
     """
     input: 
         saf_idx = get_population_saf_files,
-        joint_sfs = rules.angsd_estimate_joint_population_sfs.output
+        joint_sfs = rules.angsd_estimate_joint_population_sfs_random100Mb.output
     output:
         fst = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.fst.gz',
         idx = f'{ANGSD_DIR}/summary_stats/fst/{{chrom}}/{PREFIX}_{{chrom}}_{{pop_comb}}.fst.idx'
@@ -138,7 +224,7 @@ rule angsd_estimate_thetas_byPopulation:
     """
     input:
         saf_idx = rules.angsd_saf_likelihood_byPopulation.output.saf_idx,
-        sfs = rules.angsd_estimate_sfs_byPopulation.output
+        sfs = rules.angsd_estimate_sfs_byPopulation_random100Mb.output
     output:
         idx = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.thetas.idx',
         thet = f'{ANGSD_DIR}/summary_stats/thetas/{{chrom}}/{PREFIX}_{{chrom}}_{{population}}.thetas.gz'
