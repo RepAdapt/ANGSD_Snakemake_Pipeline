@@ -131,8 +131,8 @@ rule angsd_estimate_joint_population_sfs_random100Mb:
     input:
         safs = get_population_saf_files_random100Mb
     output:
-        f'{ANGSD_DIR}/sfs/2dsfs/{{chrom}}/{{chrom}}_{{pop_comb}}.2dsfs'
-    log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs/{{chrom}}_{{pop_comb}}_2dsfs.log'
+        f'{ANGSD_DIR}/sfs/2dsfs/{{pop_comb}}.2dsfs'
+    log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs_random100Mb/{{pop_comb}}_2dsfs.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     threads: 12
     resources:
