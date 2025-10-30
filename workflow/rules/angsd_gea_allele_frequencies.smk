@@ -127,7 +127,7 @@ rule concatenate_allele_frequencies:
     input:
         lambda w: expand(rules.get_af_columns_only.output, population=POPULATIONS, chrom=w.chrom)
     output:
-        f"{ANGSD_DIR}/snps/all_populations_{{chrom}}_mafs.txt"
+        f"{ANGSD_DIR}/snps/{PREFIX}_all_populations_{{chrom}}_mafs.txt"
     conda: "../envs/python.yaml"
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 16000,

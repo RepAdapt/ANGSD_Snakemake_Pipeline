@@ -316,7 +316,7 @@ rule concatenate_windowed_fst:
     input:
         lambda w: expand(rules.get_fst_columns_only.output, pop_comb=POP_COMBS, chrom=w.chrom)
     output:
-        f"{ANGSD_DIR}/summary_stats/fst/all_populations_{{chrom}}_windowed_fst.txt"
+        f"{ANGSD_DIR}/summary_stats/fst/{PREFIX}_all_populations_{{chrom}}_windowed_fst.txt"
     conda: "../envs/python.yaml"
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 16000,
