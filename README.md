@@ -49,9 +49,10 @@ This pipeline assumes that reads have already been aligned to a reference
 genome and that you have the resulting BAM files. These can be generated using
 scripts 01 to 05b from the [RepAdapt mpileup SNP calling
 pipeline](https://github.com/pbattlay/RepAdapt/tree/main/snp_calling_pipeline/mpileup_pipeline).
-Once you have bams, you need to create text files with the BAMs for each
-population, and one for all samplesi, and place these in
-[./resources/bam_lists](./resources/bam_lists). This can be done as follows:
+Note, depth statistics for use in SV detection can be estimated using 
+step 6c of that same pipeline. Once you have bams, you need to create 
+text files with the BAMs for eachpopulation, and one for all samples, 
+and place these in [./resources/bam_lists](./resources/bam_lists). This can be done as follows:
 
 `find /path/to/bams -name '*<population>*.bam >
 resources/bam_lists/<population>_bams.txt`
