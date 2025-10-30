@@ -301,6 +301,29 @@ rule windowed_fst:
         realSFS fst stats2 {input} -win {params.win} -step {params.step} > {output} 2> {log}
         """
 
+rule get_fst_columns_only:
+    input:
+        rules.windowed_fst.output
+    output:
+        temp(f'{PROGRAM_RESOURCE_DIR}/windowed_fst/{{chrom}}_{{pop_comb}}_fst.txt')
+    shell:
+        """
+        echo "chrom\tpos\t{wildcards.pop_comb}" > {output}
+        cat {input} | tail -n +2 | cut -f2,3,5 >> {output}
+        """
+
+rule concatenate_windowed_fst:
+    input:
+        lambda w: expand(rules.get_fst_columns_only.output, pop_comb=POP_COMBS, chrom=w.chrom)
+    output:
+        f"{ANGSD_DIR}/summary_stats/fst/all_populations_{{chrom}}_windowed_fst.txt"
+    conda: "../envs/python.yaml"
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 16000,
+        runtime = 360
+    script:
+        "../scripts/python/concatenate_mafs_fst.py"
+
 ##############
 #### POST ####
 ##############
@@ -310,7 +333,7 @@ rule angsd_sweeps_fst_thetas_done:
     Generate empty flag file signalling successful completion of SFS and summary stat for habitats
     """
     input:
-        expand(rules.windowed_fst.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES), 
+        expand(rules.concatenate_windowed_fst.output, chrom=CHROMOSOMES), 
         expand(rules.windowed_theta.output, population=POPULATIONS, chrom=CHROMOSOMES),
         expand(rules.angsd_fst_readable.output, pop_comb=POP_COMBS, chrom=CHROMOSOMES), 
         expand(rules.angsd_thetas_readable.output, population=POPULATIONS, chrom=CHROMOSOMES) 

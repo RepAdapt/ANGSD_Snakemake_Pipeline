@@ -112,9 +112,32 @@ rule angsd_alleleCounts_freq_byPopulation:
             -bam {input.bams} 2> {log}
         """
 
+rule get_af_columns_only:
+    input:
+        rules.angsd_alleleCounts_freq_byPopulation.output.mafs
+    output:
+        temp(f'{PROGRAM_RESOURCE_DIR}/snps/{{population}}/{{chrom}}_{{population}}_mafs.txt')
+    shell:
+        """
+        echo "chrom\tpos\t{wildcards.population}" > {output}
+        zcat {input} | tail -n +2 | cut -f1,2,7 >> {output}
+        """
+
+rule concatenate_allele_frequencies:
+    input:
+        lambda w: expand(rules.get_af_columns_only.output, population=POPULATIONS, chrom=w.chrom)
+    output:
+        f"{ANGSD_DIR}/snps/all_populations_{{chrom}}_mafs.txt"
+    conda: "../envs/python.yaml"
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * 16000,
+        runtime = 360
+    script:
+        "../scripts/python/concatenate_mafs_fst.py"
+
 rule angsd_gea_allele_frequencies_done:
     input:
-        expand(rules.angsd_alleleCounts_freq_byPopulation.output, population=POPULATIONS, chrom=CHROMOSOMES)
+        expand(rules.concatenate_allele_frequencies.output, chrom=CHROMOSOMES)
     output:
         f"{ANGSD_DIR}/angsd_gea_allele_frequencies.done"
     shell:

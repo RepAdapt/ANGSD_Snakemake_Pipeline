@@ -49,6 +49,8 @@ localrules:
     copy_ref,
     samtools_index_ref,
     angsd_sweeps_fst_thetas_done,
+    get_af_columns_only,
+    get_fst_columns_only,
     angsd_gea_allele_frequencies_done
 
 include: 'rules/common.smk'
