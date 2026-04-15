@@ -11,3 +11,5 @@ log_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/logs
 
 # Parameters
 num_random_sfs_sites: 100000
+win_size: 20000
+win_step: 20000

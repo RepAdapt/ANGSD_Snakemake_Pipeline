@@ -264,8 +264,8 @@ rule windowed_fst:
     log: f'{LOG_DIR}/windowed_fst/{{chrom}}_{{pop_comb}}_windowedFst.log'
     container: 'library://james-s-santangelo/angsd/angsd:0.938'
     params:
-        win = 20000,
-        step = 20000
+        win = config["win_size"],
+        step = config["win_step"] 
     resources:
         mem_mb = lambda wildcards, attempt: attempt * 4000,
         runtime = 60
