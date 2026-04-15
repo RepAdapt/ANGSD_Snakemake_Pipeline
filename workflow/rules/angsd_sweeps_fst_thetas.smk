@@ -106,19 +106,17 @@ rule angsd_estimate_joint_population_sfs_random:
     output:
         f'{ANGSD_DIR}/sfs/2dsfs/{PREFIX}_{{pop_comb}}_random.2dsfs'
     log: f'{LOG_DIR}/angsd_estimate_joint_population_sfs_random/{{pop_comb}}_2dsfs.log'
-    container: 'library://james-s-santangelo/angsd/angsd:0.938'
-    threads: 12
+    container: 'library://james-s-santangelo/winsfs/winsfs:v0.7.0'
+    threads: 8
     resources:
-        mem_mb = 3000,
+        mem_mb = 10000,
         runtime = lambda wildcards, attempt: attempt * 360 
     shell:
         """
-        realSFS {input.safs} \
-            -tole 1e-6 \
-            -maxIter 30000 \
-            -seed 42 \
-            -fold 1 \
-            -P {threads} > {output} 2> {log}
+        winsfs -vv \
+            --seed 42 \
+            --threads {threads} \
+            {input.safs} > {output} 2> {log}
         """
 
 rule angsd_estimate_sfs_byPopulation_random:
@@ -130,19 +128,17 @@ rule angsd_estimate_sfs_byPopulation_random:
     output:
         f'{ANGSD_DIR}/sfs/1dsfs/{{population}}_random.sfs'
     log: f'{LOG_DIR}/angsd_estimate_sfs_byPopulation_random/{{population}}_1dsfs.log'
-    container: 'library://james-s-santangelo/angsd/angsd:0.938'
-    threads: 6
+    container: 'library://james-s-santangelo/winsfs/winsfs:v0.7.0'
+    threads: 4
     resources:
-        mem_mb = 2000,
+        mem_mb = 5000,
         runtime = lambda wildcards, attempt:  attempt * 180 
     shell:
         """
-        realSFS {input.saf} \
-            -P {threads} \
-            -tole 1e-6 \
-            -fold 1 \
-            -maxIter 30000 \
-            -seed 42 > {output} 2> {log}
+        winsfs -vv \
+            --seed 42 
+            --threads {threads} \
+            {input.saf} > {output} 2> {log}
         """
 
 ########################
