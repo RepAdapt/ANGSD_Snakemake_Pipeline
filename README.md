@@ -7,11 +7,8 @@ included in this workflow. This is helpful for knowing the order in which rules 
 run in case you want to transform the pipeline into shell scripts rather than
 using Snakemake.
 
-Note this pipeline is identical to that on the
-[master](https://github.com/RepAdapt/ANGSD_Snakemake_Pipeline/tree/master?tab=readme-ov-file)
-branch, but will automatically rename files according to the RepAdapt prefix
-you have chosen. The prefix simply needs to be specified in the
-[config](./config/server.yaml) file.
+Note this branch uses `realSFS` for SFS optimization. If you would like to use
+`winsfs`, which shows memory and runtime improvements, use the `winsfs` branch.
 
 This repository contains an example Snakemake pipeline for using ANGSD
 to analyze low coverage data, defined in RepAdapt as < 3X. The pipeline
