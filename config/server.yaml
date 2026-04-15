@@ -2,9 +2,12 @@
 samples: ../resources/sample_sheet.txt
 chromosomes: ../resources/chromosome_file.txt
 bam_lists: ../resources/bam_lists 
-ref: /scratch/projects/trifolium/test_ref/GCA_030408175.1_UTM_Trep_v1.0_genomic.fna.gz
+ref: /scratch/projects/trifolium/repadapt_angsd_snakemake/test_ref/GCA_030408175.1_UTM_Trep_v1.0_genomic.fna.gz
 repadapt_prefix: rawg0003_trifolium_repens_santangelo  # Prefix added to beginning of all outputs
 
 # Output
 results_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/results
 log_prefix: /scratch/projects/trifolium/repadapt_angsd_snakemake/logs
+
+# Parameters
+num_random_sfs_sites: 100000
