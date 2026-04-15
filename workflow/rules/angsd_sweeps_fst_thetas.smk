@@ -46,36 +46,9 @@ rule select_random_sites:
     params:
         chroms = CHROMOSOMES,
         total_sites = int(config["num_random_sfs_sites"])
-    run:
-        import random
-        lines = open(input[0], "r").readlines()
-        chr_prop_length_dict = {}
-        total_length = 0
-        for l in lines:
-            sl = l.split("\t")
-            chr = sl[0]
-            length = int(sl[1])
-            if chr in params.chroms:
-                total_length += int(length)
-        for l in lines:
-            sl = l.split("\t")
-            chr = sl[0]
-            length = int(sl[1])
-            if chr in params.chroms:
-                chr_prop_length_dict[chr] = round(int(params.total_sites) * (length / total_length))
-        sites_dict = {}
-        random.seed(42)
-        for l in lines:
-            sl = l.split("\t")
-            chr = sl[0]
-            length = int(sl[1])
-            if chr in params.chroms:
-                sites_dict[chr] = sorted(random.sample(range(1, length), chr_prop_length_dict[chr]))
-        with open(output[0], "w") as fout:
-            for k, v in sites_dict.items():
-                for site in v:
-                    fout.write(f"{k}\t{site}\n")
-
+    conda: "../envs/python.yaml"
+    script:
+        "../scripts/python/select_random_sites.py"
 
 rule angsd_index_random_sites:
     input:
