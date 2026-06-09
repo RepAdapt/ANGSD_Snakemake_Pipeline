@@ -1,30 +1,29 @@
 import random
 
-lines = open(snakemake.input[0], "r").readlines()
-chr_prop_length_dict = {}
-total_length = 0
-for l in lines:
-    sl = l.split("\t")
-    chr = sl[0]
-    length = int(sl[1])
-    if chr in snakemake.params['chroms']:
-        total_length += int(length)
-for l in lines:
-    sl = l.split("\t")
-    chr = sl[0]
-    length = int(sl[1])
-    if chr in snakemake.params['chroms']:
-        chr_prop_length_dict[chr] = round(int(snakemake.params['total_sites'] * (length / total_length))
+# Read all verified sites from per-chromosome sites files
+chr_sites_dict = {}
+total_sites_available = 0
 
-sites_dict = {}
+for chrom in snakemake.params['chroms']:
+    sites_file = snakemake.input[0].replace('random.sites', f'MVP2026-armstrongoyster_{chrom}.sites')
+    sites = []
+    with open(sites_file, 'r') as f:
+        for line in f:
+            sl = line.strip().split()
+            sites.append(int(sl[1]))
+    chr_sites_dict[chrom] = sites
+    total_sites_available += len(sites)
+
+# Sample proportionally by chromosome based on available verified sites
 random.seed(42)
-for l in lines:
-    sl = l.split("\t")
-    chr = sl[0]
-    length = int(sl[1])
-    if chr in snakemake.params['chroms']:
-        sites_dict[chr] = sorted(random.sample(range(1, length), chr_prop_length_dict[chr]))
-with open(snakemake.output[0], "w") as fout:
-    for k, v in sites_dict.items():
-        for site in v:
-            fout.write(f"{k}\t{site}\n")
+selected_sites = {}
+for chrom, sites in chr_sites_dict.items():
+    prop = len(sites) / total_sites_available
+    n_sites = round(snakemake.params['total_sites'] * prop)
+    n_sites = min(n_sites, len(sites))  # can't sample more than available
+    selected_sites[chrom] = sorted(random.sample(sites, n_sites))
+
+with open(snakemake.output[0], 'w') as fout:
+    for chrom, sites in selected_sites.items():
+        for site in sites:
+            fout.write(f"{chrom}\t{site}\n")
