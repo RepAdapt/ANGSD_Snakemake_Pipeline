@@ -26,6 +26,7 @@ rule angsd_snps_allSamples:
         angsd -GL 1 \
             -out {params.out} \
             -nThreads {threads} \
+            -nQueueSize 50 \
             -doMajorMinor 4 \
             -SNP_pval 1e-6 \
             -doMaf 1 \
@@ -40,7 +41,6 @@ rule angsd_snps_allSamples:
             -skipTriallelic 1 \
             -uniqueOnly 1 \
             -only_proper_pairs 1 \
-            -dosnpstat 1 \
             -doHWE 1 \
             -r {wildcards.chrom} \
             -bam {input.bams} 2> {log}
